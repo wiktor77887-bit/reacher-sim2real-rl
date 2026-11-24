@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+runs/
+logs/
+models/*/final_model.zip
+*.pyc
