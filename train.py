@@ -1,6 +1,7 @@
 """Train a policy for Reacher-v5.
 
   python train.py --env nominal            # policy A: default model
+  python train.py --env dr                 # policy B: domain randomization
   python train.py --env nominal --algo sac --timesteps 150000
 """
 import argparse
@@ -34,7 +35,7 @@ class SaveVecNormalize(BaseCallback):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--env", choices=["nominal"], default="nominal")
+    p.add_argument("--env", choices=["nominal", "dr"], default="nominal")
     p.add_argument("--algo", choices=["ppo", "sac"], default="ppo")
     p.add_argument("--timesteps", type=int, default=1_000_000)
     p.add_argument("--n-envs", type=int, default=8)
