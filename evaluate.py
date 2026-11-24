@@ -1,4 +1,4 @@
-"""Evaluate trained policies against a random policy.
+"""Evaluate policies on the nominal model and on the perturbed "real robot".
 
   python evaluate.py                    # 100 episodes, all available policies
 Writes results/results.json and results/results.md.
@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-from reacher_s2r.envs import make_env
+from reacher_s2r.envs import REAL_OBS_NOISE_STD, REAL_ROBOT, REAL_ROBOT_HARD, make_env
 from reacher_s2r.policy import Policy
 
 SUCCESS_RADIUS = 0.02  # 2 cm
@@ -17,9 +17,10 @@ SUCCESS_RADIUS = 0.02  # 2 cm
 POLICIES = {
     "Random": None,
     "PPO": ("ppo", "models/ppo_nominal"),
+    "PPO + DR": ("ppo", "models/ppo_dr"),
     "SAC": ("sac", "models/sac_nominal"),
 }
-ENVS = {"nominal": "Nominal model"}
+ENVS = {"nominal": "Nominal model", "real": "\"Real robot\"", "real_hard": "\"Real robot\", weak motors"}
 
 
 def load(spec):
@@ -79,7 +80,8 @@ def main():
 
     out = Path("results")
     out.mkdir(exist_ok=True)
-    meta = {"episodes": args.episodes, "success_radius_m": SUCCESS_RADIUS}
+    meta = {"episodes": args.episodes, "success_radius_m": SUCCESS_RADIUS,
+            "real_robot": REAL_ROBOT, "real_robot_hard": REAL_ROBOT_HARD, "real_obs_noise_std": REAL_OBS_NOISE_STD}
     (out / "results.json").write_text(json.dumps({"meta": meta, "results": results}, indent=2))
 
     lines = ["| Policy | Model | Mean reward | Mean final distance ± SE [cm] | Median [cm] | Success (< 2 cm) |",
